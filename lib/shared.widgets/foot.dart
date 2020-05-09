@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter4/shared.widgets/menubtn.dart';
 
 class Foot extends StatelessWidget {
+	final List<MenuBtn> _buttons = [
+		MenuBtn("Home", Icons.home, "/"),
+		MenuBtn("Info", Icons.help, "/info"),
+	];
+
 	@override
 	Widget build(context) {
 		return Container(
@@ -13,44 +19,7 @@ class Foot extends StatelessWidget {
 						end: Alignment(1,1),						
 					),
 				),
-				child: Row(					
-					children: [
-						Expanded(
-							child: GestureDetector(
-								child: DecoratedBox(
-									decoration: BoxDecoration(color: Colors.indigo),
-									child: Column(
-										children: [
-											Icon(Icons.home),
-											Text("Home"),
-										],
-										mainAxisAlignment: MainAxisAlignment.center
-									)
-								),
-								onTap: () {
-									print("test");
-								},
-							), 
-						),
-						Expanded(
-							child: GestureDetector(
-								child: DecoratedBox(
-									decoration: BoxDecoration(color: Colors.red),
-									child: Column(
-										children: [
-											Icon(Icons.help),
-											Text("Info"),
-										],
-										mainAxisAlignment: MainAxisAlignment.center
-									)
-								),
-								onTap: () {
-									print("test2");
-								},
-							), 
-						),
-					]
-				)
+				child: Row(children: _buttons)
 			),
 		);
 	}

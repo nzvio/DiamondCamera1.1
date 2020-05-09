@@ -11,10 +11,10 @@ class MyApp extends StatefulWidget {
 	MyApp({Key key}): super(key: key);
 	
 	@override
-	MyAppState createState() => MyAppState();
+	_MyAppState createState() => _MyAppState();
 }
 
-class MyAppState extends State {
+class _MyAppState extends State {
 	@override 
 	Widget build(BuildContext context) {
 		return MaterialApp(			
