@@ -3,12 +3,12 @@ import 'package:flutter4/pages/home/shape.dart';
 
 class HomePage extends StatelessWidget {
 	final List<Shape> _shapes = [
-		Shape("Round", "round.png"),
-		Shape("Oval", "oval.png"),
-		Shape("Cushion", "cushion.png"),
-		Shape("Emerald", "emerald.png"),
-		Shape("Princess", "princess.png"),
-		Shape("Pearl", "pearl.png"),		
+		Shape("round"),
+		Shape("oval"),
+		Shape("cushion"),
+		Shape("emerald"),
+		Shape("princess"),
+		Shape("pearl"),		
 	];
 	
 	@override 

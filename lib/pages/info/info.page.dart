@@ -15,7 +15,7 @@ class InfoPage extends StatelessWidget {
 					builder: (context, snapshot) {
 						return Html(data: snapshot.data ?? "");
 					}
-				),								
+				),
 				Align(
 					alignment: Alignment.topLeft,
 					child: FractionallySizedBox(

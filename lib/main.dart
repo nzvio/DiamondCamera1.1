@@ -12,19 +12,19 @@ class MyApp extends StatefulWidget {
 	MyApp({Key key}): super(key: key);
 	
 	@override
-	_MyAppState createState() => _MyAppState();
+	MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State {
+class MyAppState extends State {
 	int _currentPage = 0;
 	List<Widget> _pages = [
 		HomePage(),
-		InfoPage(),		
+		InfoPage(),			
 	];
 
 	@override 
 	Widget build(BuildContext context) {
-		return MaterialApp(
+		return MaterialApp(			
 			title: "Diamond Camera",
 			theme: ThemeData(
 				textTheme: Theme.of(context).textTheme.apply(bodyColor: Colors.white)
@@ -52,12 +52,14 @@ class _MyAppState extends State {
 					fixedColor: Colors.grey,
 					backgroundColor: Color.fromRGBO(0, 0, 0, 1),
 					unselectedItemColor: Color.fromRGBO(255, 255, 255, 1),					
-					onTap: (int index) {
-						setState(() => {_currentPage = index});
-					}
+					onTap: setCurrentPage,
 				),
 				backgroundColor: Color.fromRGBO(35, 35, 35, 1),				
 			)
 		);
+	}
+
+	void setCurrentPage(int index) {
+		setState(() => {_currentPage = index});
 	}
 }
