@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter4/pages/home/home.page.dart';
-import 'package:flutter4/pages/info/info.page.dart';
-import 'package:flutter4/shared/head.dart';
+import 'package:flutter4/page.widgets/home/home.page.dart';
+import 'package:flutter4/page.widgets/info/info.page.dart';
+import 'package:flutter4/shared.widgets/head.dart';
 
-void main() {
+void main() {	
 	runApp(MyApp());
 }
 
@@ -32,10 +32,7 @@ class MyAppState extends State {
 			home: Scaffold(
 				appBar: Head(),
 				body: Container(
-					child: Padding(
-						child: _pages.elementAt(_currentPage),
-						padding: EdgeInsets.all(10),
-					)
+					child: _pages.elementAt(_currentPage),					
 				),
 				bottomNavigationBar: BottomNavigationBar(
 					items: [
@@ -60,6 +57,8 @@ class MyAppState extends State {
 	}
 
 	void setCurrentPage(int index) {
-		setState(() => {_currentPage = index});
+		setState(() {
+			_currentPage = index;			
+		});			
 	}
 }
