@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter4/model/diamondgroup.model.dart';
+import 'package:flutter4/page.widgets/home/diamonds/itemsslider.dart';
+import 'package:flutter4/page.widgets/home/home.page.dart';
+import 'package:flutter4/services/diamonds.repository.dart';
 
 class DiamondsPage extends StatefulWidget {
+	final HomePageState parent;
+
+	DiamondsPage(this.parent);
+	
 	@override
-	_DiamondsPageState createState() => _DiamondsPageState();	
+	_DiamondsPageState createState() => _DiamondsPageState(parent);	
 }
 
 class _DiamondsPageState extends State {
+	final HomePageState parent;
 	List<CameraDescription> cameras;
-	CameraController controller;	
+	CameraController controller;
+	DiamondGroup group;
+
+	_DiamondsPageState(this.parent);
 	
 	@override
 	void initState() {
-		super.initState();		
+		super.initState();	
+		group = DiamondsRepository.groups.firstWhere((g) => g.name == parent.selectedShapeName);
 		_initCamera().then((_) {
 			if (mounted) {
 				setState(() {}); // refresh state
@@ -48,15 +61,7 @@ class _DiamondsPageState extends State {
     					),
   					),
 				),
-				Positioned(
-					bottom: 0,
-					left: 0,
-					right: 0,
-					child: Container(
-						color: Color.fromRGBO(0, 0, 0, 0.5),
-						height: 200,
-					),
-				),				
+				ItemsSlider(group),
 			],
 		);
 	}

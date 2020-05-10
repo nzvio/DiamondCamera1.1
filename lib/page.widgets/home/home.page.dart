@@ -9,25 +9,25 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {	
-	String _mode = "shapes";
-	String _selectedShapeName = "";
+	String mode = "shapes";
+	String selectedShapeName = "";
 	
 	@override 
 	void initState() {
         super.initState();
-		_mode = "shapes";
-		_selectedShapeName = "";
+		mode = "shapes";
+		selectedShapeName = "";
   	}
 
 	@override 
 	Widget build(BuildContext context) {
-		return _mode == "shapes" ? ShapesPage(this) : DiamondsPage();
+		return mode == "shapes" ? ShapesPage(this) : DiamondsPage(this);
 	}	
 
 	void changeState({String mode, String selectedShapeName}) {
 		setState(() {
-			_mode = mode;
-			_selectedShapeName = selectedShapeName;
+			this.mode = mode;
+			this.selectedShapeName = selectedShapeName;
 		});
 	}
 }

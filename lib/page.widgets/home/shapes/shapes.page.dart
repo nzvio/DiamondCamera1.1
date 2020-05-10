@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter4/page.widgets/home/home.page.dart';
-import 'package:flutter4/page.widgets/home/shape.dart';
+import 'package:flutter4/page.widgets/home/shapes/shape.dart';
+import 'package:flutter4/services/diamonds.repository.dart';
 
 class ShapesPage extends StatelessWidget {		
 	final HomePageState parent;
+	final groups = DiamondsRepository.groups;
 
 	ShapesPage(this.parent);
 
@@ -23,14 +25,7 @@ class ShapesPage extends StatelessWidget {
 							mainAxisSpacing: 15,
 							crossAxisSpacing: 15,
 							childAspectRatio: 0.65,						
-							children: [
-								Shape("round", parent),
-								Shape("oval", parent),
-								Shape("cushion", parent),
-								Shape("emerald", parent),
-								Shape("princess", parent),
-								Shape("pearl", parent),	
-							],
+							children: groups.map((g) => Shape(g, parent)).toList(),
 						)
 					),
 				],

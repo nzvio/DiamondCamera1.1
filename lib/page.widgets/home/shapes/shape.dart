@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-import "package:flutter4/extensions/string.extensions.dart";
+import "package:flutter4/extensions/string.extension.dart";
+import 'package:flutter4/model/diamondgroup.model.dart';
 import 'package:flutter4/page.widgets/home/home.page.dart';
 
 class Shape extends StatelessWidget {
-	final String name;		
+	final DiamondGroup group;
 	final HomePageState parent;
 	
-	Shape(this.name, this.parent);
+	Shape(this.group, this.parent);
 
 	@override
 	Widget build(BuildContext context) {
@@ -16,14 +17,14 @@ class Shape extends StatelessWidget {
 				children: <Widget>[
 					AspectRatio(
 						aspectRatio: 0.8, 
-						child: Image.asset("assets/img/shapes/$name.png")
+						child: Image.asset("assets/img/shapes/${group.img}")
 					),
 					Divider(height: 5),
-					Text(name.capitalize()),
+					Text(group.name.capitalize()),
 				],
 			),
-			onTap: () {
-				parent.changeState(mode: "diamonds", selectedShapeName: name);
+			onTap: () {				
+				parent.changeState(mode: "diamonds", selectedShapeName: group.name);				
 			},
 		);
 	}

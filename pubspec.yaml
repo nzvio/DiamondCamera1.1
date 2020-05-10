@@ -48,6 +48,12 @@ flutter:
 
   assets:
     - assets/img/shapes/
+    - assets/img/stones/cushion/
+    - assets/img/stones/emerald/
+    - assets/img/stones/oval/
+    - assets/img/stones/pearl/
+    - assets/img/stones/princess/
+    - assets/img/stones/round/
     - assets/img/template/
     - assets/html/
   
