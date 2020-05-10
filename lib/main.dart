@@ -56,9 +56,13 @@ class MyAppState extends State {
 		);
 	}
 
-	void setCurrentPage(int index) {
+	void setCurrentPage(int index) {		
 		setState(() {
-			_currentPage = index;			
+			if (_currentPage != index) {
+				_currentPage = index;			
+			} else if (index == 0) { // current page is already	Home, but may be not in default mode ("shapes"), then set to "shapes"
+				(_pages[0] as HomePage).state.setState(() {(_pages[0] as HomePage).state.mode = "shapes";});
+			}			
 		});			
 	}
 }

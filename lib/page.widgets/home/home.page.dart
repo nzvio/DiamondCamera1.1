@@ -4,8 +4,10 @@ import 'package:flutter4/page.widgets/home/diamonds/diamonds.page.dart';
 import 'package:flutter4/page.widgets/home/shapes/shapes.page.dart';
 
 class HomePage extends StatefulWidget {
+	HomePageState state;
+	
 	@override
-	HomePageState createState() => HomePageState();
+	HomePageState createState() => state = HomePageState();
 }
 
 class HomePageState extends State<HomePage> {	

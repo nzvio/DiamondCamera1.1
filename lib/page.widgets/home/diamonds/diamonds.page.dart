@@ -16,8 +16,8 @@ class DiamondsPage extends StatefulWidget {
 
 class _DiamondsPageState extends State {
 	final HomePageState parent;
-	List<CameraDescription> cameras;
-	CameraController controller;
+	List<CameraDescription> _cameras;
+	CameraController _cameraController;
 	DiamondGroup group;
 
 	_DiamondsPageState(this.parent);
@@ -34,14 +34,20 @@ class _DiamondsPageState extends State {
 	}
 
 	Future<void> _initCamera() async {
-		cameras = await availableCameras();
-		controller = CameraController(cameras[0], ResolutionPreset.medium);
-		await controller.initialize();		
+		_cameras = await availableCameras();
+		_cameraController = CameraController(_cameras[0], ResolutionPreset.medium);
+		await _cameraController.initialize();		
 	}
+
+	@override
+  	void dispose() {
+    	_cameraController?.dispose();
+    	super.dispose();
+  	}
 
 	@override 
 	Widget build(BuildContext context) {
-		bool cameraReady = controller?.value?.isInitialized ?? false;
+		bool cameraReady = _cameraController?.value?.isInitialized ?? false;
 
 		if (!cameraReady) {
       		return Text("waiting for camera...");
@@ -53,11 +59,11 @@ class _DiamondsPageState extends State {
 		return Stack(
 			children: <Widget>[
 				Transform.scale(
-  					scale: controller.value.aspectRatio / deviceRatio,
+  					scale: _cameraController.value.aspectRatio / deviceRatio,
   					child: Center(
     					child: AspectRatio(
-      						aspectRatio: controller.value.aspectRatio,
-      						child: CameraPreview(controller),
+      						aspectRatio: _cameraController.value.aspectRatio,
+      						child: CameraPreview(_cameraController),
     					),
   					),
 				),
