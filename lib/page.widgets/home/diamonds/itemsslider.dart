@@ -61,10 +61,18 @@ class _ItemsSliderState extends State {
 								child: Row(
 									children: <Widget>[
 										GestureDetector(
-											child: Container(
-												width: 15,
-												child: Text("\uf053", style: TextStyle(fontFamily: "Awesome", fontSize: 18)),
-											),
+											behavior: HitTestBehavior.opaque,
+											child: Expanded(
+												child: Container(
+													width: 15,													
+													child: Column(
+														mainAxisAlignment: MainAxisAlignment.center,
+														children: [
+															Text("\uf053", style: TextStyle(fontFamily: "Awesome", fontSize: 18)),
+														]
+													),
+												)
+											),											
 											onTap: _onLeft,
 										),
 										Container(width: 10),
@@ -80,13 +88,21 @@ class _ItemsSliderState extends State {
 										),
 										Container(width: 10),
 										GestureDetector(
-											child: Container(
-												width: 15,
-												alignment: Alignment.centerRight,
-												child: Text("\uf054", style: TextStyle(fontFamily: "Awesome", fontSize: 18)),
-											),
+											behavior: HitTestBehavior.opaque,
+											child: Expanded(
+												child: Container(
+													width: 15,													
+													child: Column(
+														mainAxisAlignment: MainAxisAlignment.center,
+														crossAxisAlignment: CrossAxisAlignment.end,
+														children: [
+															Text("\uf054", style: TextStyle(fontFamily: "Awesome", fontSize: 18)),
+														]
+													),
+												)
+											),											
 											onTap: _onRight,
-										)
+										),
 									],
 								)
 							)

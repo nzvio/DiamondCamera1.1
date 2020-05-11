@@ -4,10 +4,10 @@ import 'package:flutter4/page.widgets/home/diamonds/diamonds.page.dart';
 import 'package:flutter4/page.widgets/home/shapes/shapes.page.dart';
 
 class HomePage extends StatefulWidget {
-	HomePageState state;
+	HomePage({Key key}): super(key: key);
 	
 	@override
-	HomePageState createState() => state = HomePageState();
+	HomePageState createState() => HomePageState();
 }
 
 class HomePageState extends State<HomePage> {	
@@ -22,7 +22,7 @@ class HomePageState extends State<HomePage> {
   	}
 
 	@override 
-	Widget build(BuildContext context) {
+	Widget build(BuildContext context) {		
 		return mode == "shapes" ? ShapesPage(this) : DiamondsPage(this);
 	}	
 

@@ -4,23 +4,31 @@ import 'package:flutter4/page.widgets/home/home.page.dart';
 import 'package:flutter4/page.widgets/info/info.page.dart';
 import 'package:flutter4/shared.widgets/head.dart';
 
+
 void main() {	
 	runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
-	MyApp({Key key}): super(key: key);
+	MyApp({Key key}): super(key: key);	
 	
 	@override
 	MyAppState createState() => MyAppState();
 }
 
 class MyAppState extends State {
+	final GlobalKey<HomePageState> _homePageState = GlobalKey<HomePageState>();
 	int _currentPage = 0;
-	List<Widget> _pages = [
-		HomePage(),
-		InfoPage(),			
-	];
+	List<Widget> _pages;
+
+	@override 
+	void initState() {
+		_pages = [
+			HomePage(key: _homePageState),
+			InfoPage(),			
+		];
+		super.initState();
+	}
 
 	@override 
 	Widget build(BuildContext context) {
@@ -49,19 +57,22 @@ class MyAppState extends State {
 					fixedColor: Colors.grey,
 					backgroundColor: Color.fromRGBO(0, 0, 0, 1),
 					unselectedItemColor: Color.fromRGBO(255, 255, 255, 1),					
-					onTap: setCurrentPage,
+					onTap: (index) => setCurrentPage(index, context),
 				),
 				backgroundColor: Color.fromRGBO(35, 35, 35, 1),				
 			)
 		);
 	}
 
-	void setCurrentPage(int index) {		
+	void setCurrentPage(int index, BuildContext context) {		
 		setState(() {
 			if (_currentPage != index) {
 				_currentPage = index;			
 			} else if (index == 0) { // current page is already	Home, but may be not in default mode ("shapes"), then set to "shapes"
-				(_pages[0] as HomePage).state.setState(() {(_pages[0] as HomePage).state.mode = "shapes";});
+				_homePageState.currentState.changeState(mode: "shapes", selectedShapeName: "");
+				//_pages[0] = HomePage();
+				
+				//(_pages[0] as HomePage).state.setState(() {(_pages[0] as HomePage).state.mode = "shapes";});
 			}			
 		});			
 	}
