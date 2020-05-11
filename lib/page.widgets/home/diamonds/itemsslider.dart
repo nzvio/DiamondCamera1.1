@@ -21,6 +21,9 @@ class _ItemsSliderState extends State {
 	double _maxDiamondWidth = 0;	
 	ScrollController _scrollController;
 	bool _listenNeeded = true;
+	// animations
+	double _panelBottom = 0;
+	double _panelBtnBottom = -30;
 
 	_ItemsSliderState(this.group);
 
@@ -37,80 +40,78 @@ class _ItemsSliderState extends State {
 		_itemWidth = ((deviceSize.width - 70) / 3).floor();
 		_itemWidthWithPadding = _itemWidth - 10;		
 
-		return Positioned(
-			bottom: 0,
-			left: 0,
-			right: 0,
-			child: Container(
-				color: Color.fromRGBO(0, 0, 0, 0.5),
-				height: 200,
-				child: Padding(
-					padding:  EdgeInsets.all(10),
-					child: Column(
-						children: <Widget>[
-							// title
-							Row(
-								children: [
-									Expanded(child: Text("Select stone", style: TextStyle(fontSize: 18))),
-									Text("\uf078", style: TextStyle(fontFamily: "Awesome", fontSize: 18))
-								]
-							),							
-							Divider(),
-							// slider
-							Expanded(
-								child: Row(
-									children: <Widget>[
-										GestureDetector(
-											behavior: HitTestBehavior.opaque,
-											child: Expanded(
-												child: Container(
-													width: 15,													
-													child: Column(
-														mainAxisAlignment: MainAxisAlignment.center,
-														children: [
-															Text("\uf053", style: TextStyle(fontFamily: "Awesome", fontSize: 18)),
-														]
-													),
-												)
-											),											
-											onTap: _onLeft,
-										),
-										Container(width: 10),
-										Expanded(child: 
-											NotificationListener<ScrollNotification>(
-												onNotification: _onScrollNotification,
-												child: SingleChildScrollView(
-													scrollDirection: Axis.horizontal,
-													child: Row(children: _buildSliderItems()),
-													controller: _scrollController,
-												),
-											),
-										),
-										Container(width: 10),
-										GestureDetector(
-											behavior: HitTestBehavior.opaque,
-											child: Expanded(
-												child: Container(
-													width: 15,													
-													child: Column(
-														mainAxisAlignment: MainAxisAlignment.center,
-														crossAxisAlignment: CrossAxisAlignment.end,
-														children: [
-															Text("\uf054", style: TextStyle(fontFamily: "Awesome", fontSize: 18)),
-														]
-													),
-												)
-											),											
-											onTap: _onRight,
-										),
-									],
-								)
-							)
-						]
+		return Stack(
+			children: <Widget>[
+				AnimatedPositioned(
+					bottom: _panelBtnBottom,
+					right: 10,
+					duration: Duration(milliseconds: 200),
+					child: GestureDetector(
+						child: Text("\uf077", style: TextStyle(fontFamily: "Awesome", fontSize: 18)),
+						onTap: _showPanel,
 					),
-				)
-			),
+				),
+				AnimatedPositioned(
+					duration: Duration(milliseconds: 200),
+					bottom: _panelBottom,
+					left: 0,
+					right: 0,
+					child: Container(
+						color: Color.fromRGBO(0, 0, 0, 0.5),
+						height: 200,
+						child: Padding(
+							padding:  EdgeInsets.all(10),
+							child: Column(
+								children: <Widget>[
+									// title
+									Row(
+										children: [Expanded(child: Text("Select stone", style: TextStyle(fontSize: 18))),
+											GestureDetector(
+												child: Text("\uf078", style: TextStyle(fontFamily: "Awesome", fontSize: 18)),
+												onTap: _hidePanel,
+											)
+										]
+									),
+									Divider(),
+									// slider
+									Expanded(
+										child: Row(
+											children: <Widget>[
+												GestureDetector(
+													behavior: HitTestBehavior.opaque, 
+													child: Column(children: [Expanded(child: Container(width: 15, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Text("\uf053", style: TextStyle(fontFamily: "Awesome", fontSize: 18))])))]),
+													onTap: _onLeft,
+												),
+												Container(width: 10),
+												Expanded(child: 
+													NotificationListener<ScrollNotification>(
+														onNotification: _onScrollNotification,
+														child: SingleChildScrollView(
+															scrollDirection: Axis.horizontal,
+															child: Row(children: _buildSliderItems()),
+															controller: _scrollController,
+														),
+													),
+												),
+												Container(width: 10),
+												GestureDetector(
+													behavior: HitTestBehavior.opaque, 
+													child: Column(children: [Expanded(child: Container(width: 15, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Text("\uf054", style: TextStyle(fontFamily: "Awesome", fontSize: 18))])))]),
+													onTap: _onRight,
+												)
+											]
+										)
+									)
+								]
+							)
+						)
+					)
+				)				
+			]
 		);
+		
+		
+
 	}
 
 	List<Widget> _buildSliderItems() {
@@ -177,5 +178,20 @@ class _ItemsSliderState extends State {
 			await _scrollController.animateTo((offset * _itemWidth).toDouble(), duration: Duration(milliseconds: 300), curve: Curves.ease);	
 			_listenNeeded = true;
 		});	
+	}
+
+	void _hidePanel() {		
+		_panelBottom = -200;		
+		setState(() {});
+		Future.delayed(Duration(milliseconds: 200), () {
+			_panelBtnBottom = 10;
+			setState(() {});
+		});
+	}
+
+	void _showPanel() {		
+		_panelBottom = 0;
+		_panelBtnBottom = -30;
+		setState(() {});		
 	}
 }
