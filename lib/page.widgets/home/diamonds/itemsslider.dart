@@ -4,28 +4,31 @@ import 'package:flutter/rendering.dart';
 
 import 'package:flutter4/model/diamond.model.dart';
 import 'package:flutter4/model/diamondgroup.model.dart';
+import 'package:flutter4/page.widgets/home/diamonds/diamonds.page.dart';
 
 class ItemsSlider extends StatefulWidget {
 	final DiamondGroup group;
+	final DiamondsPageState parent;
 
-	ItemsSlider(this.group);
+	ItemsSlider(this.group, this.parent);
 
 	@override 
-	_ItemsSliderState createState() => _ItemsSliderState(group);
+	_ItemsSliderState createState() => _ItemsSliderState(group, parent);
 }
 
 class _ItemsSliderState extends State {
 	final DiamondGroup group;
+	final DiamondsPageState parent;
 	int _itemWidth = 0;
 	int _itemWidthWithPadding = 0;
 	double _maxDiamondWidth = 0;	
 	ScrollController _scrollController;
-	bool _listenNeeded = true;
+	bool _listenNeeded = true;	
 	// animations
 	double _panelBottom = 0;
 	double _panelBtnBottom = -30;
 
-	_ItemsSliderState(this.group);
+	_ItemsSliderState(this.group, this.parent);
 
 	@override 
 	void initState() {		
@@ -42,15 +45,17 @@ class _ItemsSliderState extends State {
 
 		return Stack(
 			children: <Widget>[
+				// open btn
 				AnimatedPositioned(
 					bottom: _panelBtnBottom,
 					right: 10,
 					duration: Duration(milliseconds: 200),
 					child: GestureDetector(
-						child: Text("\uf077", style: TextStyle(fontFamily: "Awesome", fontSize: 18)),
-						onTap: _showPanel,
+						child: Text("\uf077", style: TextStyle(fontFamily: "Awesome", fontSize: 22)),
+						onTap: _openPanel,
 					),
 				),
+				// panel
 				AnimatedPositioned(
 					duration: Duration(milliseconds: 200),
 					bottom: _panelBottom,
@@ -67,8 +72,8 @@ class _ItemsSliderState extends State {
 									Row(
 										children: [Expanded(child: Text("Select stone", style: TextStyle(fontSize: 18))),
 											GestureDetector(
-												child: Text("\uf078", style: TextStyle(fontFamily: "Awesome", fontSize: 18)),
-												onTap: _hidePanel,
+												child: Text("\uf078", style: TextStyle(fontFamily: "Awesome", fontSize: 22)),
+												onTap: _closePanel,
 											)
 										]
 									),
@@ -109,9 +114,6 @@ class _ItemsSliderState extends State {
 				)				
 			]
 		);
-		
-		
-
 	}
 
 	List<Widget> _buildSliderItems() {
@@ -180,18 +182,23 @@ class _ItemsSliderState extends State {
 		});	
 	}
 
-	void _hidePanel() {		
-		_panelBottom = -200;		
-		setState(() {});
-		Future.delayed(Duration(milliseconds: 200), () {
-			_panelBtnBottom = 10;
-			setState(() {});
+	void _closePanel() {				
+		setState(() {
+			_panelBottom = -200;		
 		});
+		Future.delayed(Duration(milliseconds: 200), () {			
+			setState(() {
+				_panelBtnBottom = 10;
+			});
+		});
+		parent.onPanelClosed();
 	}
 
-	void _showPanel() {		
-		_panelBottom = 0;
-		_panelBtnBottom = -30;
-		setState(() {});		
+	void _openPanel() {		
+		setState(() {
+			_panelBottom = 0;
+			_panelBtnBottom = -30;
+		});		
+		parent.onPanelOpened();
 	}
 }
