@@ -93,7 +93,7 @@ class _ItemsSliderState extends State {
 														onNotification: _onScrollNotification,
 														child: SingleChildScrollView(
 															scrollDirection: Axis.horizontal,
-															child: Row(children: _buildSliderItems()),
+															child: Row(children: _getSliderItems()),
 															controller: _scrollController,
 														),
 													),
@@ -116,25 +116,30 @@ class _ItemsSliderState extends State {
 		);
 	}
 
-	List<Widget> _buildSliderItems() {
+	List<Widget> _getSliderItems() {
 		List<Widget> widgets = [];
 
 		for (Diamond d in group.items) {
 			widgets.add(
-				Container(
-					width: _itemWidth.toDouble(),
-					child: Padding(
-						padding: EdgeInsets.only(left: 5, right: 5),
-						child: Column(
-							mainAxisAlignment: MainAxisAlignment.center,
-							children: [							
-								Expanded(
-									child: Image.asset("assets/img/stones/${group.name}/${d.filename}", width: d.width * _itemWidthWithPadding / _maxDiamondWidth * group.widthCoef),
-								),
-								Divider(),
-								Text(d.size, style: TextStyle(fontSize: 12)),
-								Text(d.weight, style: TextStyle(fontSize: 12)),
-							],
+				GestureDetector(
+					onTap: () => _onDiamondTap(d),
+					behavior: HitTestBehavior.opaque, 
+					child: Container(
+						width: _itemWidth.toDouble(),
+						decoration: d.active ? BoxDecoration(border: Border.all(color: Colors.white)) : null,
+						child: Padding(
+							padding: EdgeInsets.only(left: 5, right: 5),
+							child: Column(
+								mainAxisAlignment: MainAxisAlignment.center,
+								children: [							
+									Expanded(
+										child: Image.asset("assets/img/stones/${group.name}/${d.filename}", width: d.width * _itemWidthWithPadding / _maxDiamondWidth * group.widthCoef),
+									),
+									Divider(),
+									Text(d.size, style: TextStyle(fontSize: 12)),
+									Text(d.weight, style: TextStyle(fontSize: 12)),
+								],
+							)
 						)
 					)
 				)
@@ -200,5 +205,13 @@ class _ItemsSliderState extends State {
 			_panelBtnBottom = -30;
 		});		
 		parent.onPanelOpened();
+	}
+
+	void _onDiamondTap(Diamond d) {
+		setState(() {
+			group.items.forEach((diamond) => diamond.active = false);
+			d.active = true;  
+			parent.setCurrentDiamond(d);
+		});		
 	}
 }

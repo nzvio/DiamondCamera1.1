@@ -4,8 +4,10 @@ import 'package:camera/camera.dart';
 import 'package:flutter4/model/diamondgroup.model.dart';
 import 'package:flutter4/page.widgets/home/diamonds/diamonds.service.dart';
 import 'package:flutter4/page.widgets/home/diamonds/itemsslider.dart';
+import 'package:flutter4/page.widgets/home/diamonds/ring.dart';
 import 'package:flutter4/page.widgets/home/home.page.dart';
 import 'package:flutter4/services/diamonds.repository.dart';
+import 'package:flutter4/model/diamond.model.dart';
 
 class DiamondsPage extends StatefulWidget {
 	final HomePageState parent;
@@ -21,6 +23,7 @@ class DiamondsPageState extends State {
 	List<CameraDescription> _cameras;
 	CameraController _cameraController;
 	DiamondGroup group;	
+	Diamond currentDiamond;
 	// animations
 	double _screenshotBtnBottom = 210;
 
@@ -35,12 +38,12 @@ class DiamondsPageState extends State {
 	double get ringDX => DiamondsService.ringDX;
 	set ringDX(double v) => DiamondsService.ringDX = v;
 	double get ringDY => DiamondsService.ringDY;
-	set ringDY(double v) => DiamondsService.ringDY = v;
+	set ringDY(double v) => DiamondsService.ringDY = v;	
 	
 	@override
 	void initState() {
 		super.initState();	
-		group = DiamondsRepository.groups.firstWhere((g) => g.name == parent.selectedShapeName);
+		group = DiamondsRepository.groups.firstWhere((g) => g.name == parent.selectedShapeName);		
 		_initCamera().then((_) {
 			if (mounted) {
 				setState(() {}); // refresh state
@@ -82,9 +85,7 @@ class DiamondsPageState extends State {
     						),
   						),
 					) : 
-					Container(),
-				// slider
-				ItemsSlider(group, this),
+					Container(),				
 				// camera power btn
 				Positioned(
 					left: 10,
@@ -155,11 +156,13 @@ class DiamondsPageState extends State {
 					left: deviceSize.width / 2 - 70 + ringDX,
 					top: 150 + ringDY,
 					child: GestureDetector(
-						child: _getRing(),
+						child: Ring(this),
 						behavior: HitTestBehavior.opaque, 						
 						onPanUpdate: _onRingDrag,						
 					),
 				),
+				// slider
+				ItemsSlider(group, this),
 			],
 		);
 	}
@@ -199,28 +202,7 @@ class DiamondsPageState extends State {
 		_cameraController = CameraController(_cameras[currentCamera], ResolutionPreset.medium);
 		await _cameraController.initialize();
 		setState(() {});
-	}
-
-	Widget _getRing() {
-		if (ringStatus == "off") {
-			return Container();
-		} else {
-			String img = ringStatus == "gold" ? "shinka-gold.png" : "shinka-silver.png";
-			return Column(children: <Widget>[
-				Container(
-					width: 140,					
-					child: Center(
-						child: Image.asset("assets/img/template/$img", width: 80, height: 10)
-					),
-				),
-				Container(
-					width: 140,
-					alignment: Alignment.bottomRight,
-					child: Text("\uf0b2", style: TextStyle(fontFamily: "Awesome", fontSize: 16, color: Color.fromRGBO(255, 255, 255, 0.5))),
-				),
-			]);
-		}		
-	}
+	}	
 
 	void _toggleRing() {
 		setState(() {
@@ -231,7 +213,7 @@ class DiamondsPageState extends State {
 			} else if (ringStatus == "silver") {
 				ringStatus = "off";
 			}
-		});		
+		});			
 	}
 	
 	void _onRingDrag(DragUpdateDetails event) {
@@ -239,5 +221,11 @@ class DiamondsPageState extends State {
 			ringDX += event.delta.dx;  
 			ringDY += event.delta.dy;  
 		});		
-	}	
+	}
+
+	void setCurrentDiamond(Diamond d) {
+		setState(() {
+			currentDiamond = d;  
+		});		
+	}
 }

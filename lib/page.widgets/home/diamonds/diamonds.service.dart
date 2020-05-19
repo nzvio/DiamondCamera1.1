@@ -3,5 +3,5 @@ class DiamondsService {
 	static int currentCamera = 0;
 	static String ringStatus = "gold";
 	static double ringDX = 0;
-	static double ringDY = 0;
+	static double ringDY = 0;	
 }
