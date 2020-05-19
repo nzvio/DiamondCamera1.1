@@ -30,6 +30,12 @@ class DiamondsPageState extends State {
 	set cameraPower(bool v) => DiamondsService.cameraPower = v;
 	int get currentCamera => DiamondsService.currentCamera;
 	set currentCamera(int v) => DiamondsService.currentCamera = v;
+	String get ringStatus => DiamondsService.ringStatus;
+	set ringStatus(String v) => DiamondsService.ringStatus = v;
+	double get ringDX => DiamondsService.ringDX;
+	set ringDX(double v) => DiamondsService.ringDX = v;
+	double get ringDY => DiamondsService.ringDY;
+	set ringDY(double v) => DiamondsService.ringDY = v;
 	
 	@override
 	void initState() {
@@ -39,7 +45,7 @@ class DiamondsPageState extends State {
 			if (mounted) {
 				setState(() {}); // refresh state
 			}
-		});		
+		});			
 	}
 
 	Future<void> _initCamera() async {
@@ -117,7 +123,20 @@ class DiamondsPageState extends State {
 					right: 10,
 					top: 10,
 					child: GestureDetector(
-						child: Text("\uf70b", style: TextStyle(fontFamily: "Awesome", fontSize: 28))
+						child: Stack(
+							children: <Widget>[
+								Text("\uf70b", style: TextStyle(fontFamily: "Awesome", fontSize: 28, color: ringStatus == "gold" ? Color.fromRGBO(231, 180, 63, 1) : Color.fromRGBO(255, 255, 255, 1))),
+								Positioned(
+									child: 
+										ringStatus == "off" ? 
+											Text("\uf00d", style: TextStyle(fontFamily: "Awesome", fontSize: 16, color: Colors.red)) :
+											Text(""),											
+									right: 0,
+									bottom: 0,
+								),
+							],
+						), 
+						onTap: _toggleRing,
 					)
 				),
 				// screenshot btn
@@ -129,7 +148,18 @@ class DiamondsPageState extends State {
 					child: GestureDetector(
 						child: Center(child: Text("\uf030", style: TextStyle(fontFamily: "Awesome", fontSize: 32))),
 					)
-				)
+				),
+				// ring
+				AnimatedPositioned(
+					duration: Duration(milliseconds: 0),
+					left: deviceSize.width / 2 - 70 + ringDX,
+					top: 150 + ringDY,
+					child: GestureDetector(
+						child: _getRing(),
+						behavior: HitTestBehavior.opaque, 						
+						onPanUpdate: _onRingDrag,						
+					),
+				),
 			],
 		);
 	}
@@ -170,4 +200,44 @@ class DiamondsPageState extends State {
 		await _cameraController.initialize();
 		setState(() {});
 	}
+
+	Widget _getRing() {
+		if (ringStatus == "off") {
+			return Container();
+		} else {
+			String img = ringStatus == "gold" ? "shinka-gold.png" : "shinka-silver.png";
+			return Column(children: <Widget>[
+				Container(
+					width: 140,					
+					child: Center(
+						child: Image.asset("assets/img/template/$img", width: 80, height: 10)
+					),
+				),
+				Container(
+					width: 140,
+					alignment: Alignment.bottomRight,
+					child: Text("\uf0b2", style: TextStyle(fontFamily: "Awesome", fontSize: 16, color: Color.fromRGBO(255, 255, 255, 0.5))),
+				),
+			]);
+		}		
+	}
+
+	void _toggleRing() {
+		setState(() {
+			if (ringStatus == 'off') {
+				ringStatus = "gold";
+			} else if (ringStatus == "gold") {
+				ringStatus = "silver";
+			} else if (ringStatus == "silver") {
+				ringStatus = "off";
+			}
+		});		
+	}
+	
+	void _onRingDrag(DragUpdateDetails event) {
+		setState(() {
+			ringDX += event.delta.dx;  
+			ringDY += event.delta.dy;  
+		});		
+	}	
 }
