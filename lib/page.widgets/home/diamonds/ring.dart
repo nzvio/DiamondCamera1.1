@@ -11,8 +11,7 @@ class Ring extends StatelessWidget {
 
 	@override 
 	Widget build(BuildContext context) {
-		String shinkaImg = _getShinkaImg();
-		print("ring build");
+		String shinkaImg = _getShinkaImg();		
 		
 		return Container(
 			width: 140,
@@ -24,7 +23,7 @@ class Ring extends StatelessWidget {
 						child: 
 							parent.currentDiamond != null ?
 								Image.asset("assets/img/stones/${parent.group.name}/${parent.currentDiamond.filename}", height: 10 * parent.currentDiamond.width / 2.5,) :
-								null,
+								Container()
 					),
 					Positioned(
 						right: 0, 
@@ -32,7 +31,7 @@ class Ring extends StatelessWidget {
 						child: 
 							parent.currentDiamond != null || ringStatus != "off" ?
 								Text("\uf0b2", style: TextStyle(fontFamily: "Awesome", fontSize: 16, color: Color.fromRGBO(255, 255, 255, 0.5))) :
-								null
+								Container()
 					)
 				],
 			), 

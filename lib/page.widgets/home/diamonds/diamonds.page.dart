@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:screenshot/screenshot.dart';
+import 'dart:io';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'package:flutter4/model/diamondgroup.model.dart';
 import 'package:flutter4/page.widgets/home/diamonds/diamonds.service.dart';
@@ -22,8 +26,10 @@ class DiamondsPageState extends State {
 	final HomePageState parent;
 	List<CameraDescription> _cameras;
 	CameraController _cameraController;
+	ScreenshotController _screenshotController = ScreenshotController(); 
 	DiamondGroup group;	
 	Diamond currentDiamond;
+	bool hasStoragePermission = false;
 	// animations
 	double _screenshotBtnBottom = 210;
 
@@ -48,7 +54,8 @@ class DiamondsPageState extends State {
 			if (mounted) {
 				setState(() {}); // refresh state
 			}
-		});			
+		});
+		_initPermissions();
 	}
 
 	Future<void> _initCamera() async {
@@ -58,6 +65,11 @@ class DiamondsPageState extends State {
 			_cameraController = CameraController(_cameras[currentCamera], ResolutionPreset.medium);
 			await _cameraController.initialize();
 		}		
+	}
+
+	Future<void> _initPermissions() async {
+		PermissionStatus status = await Permission.storage.request();
+		hasStoragePermission = status.isGranted;
 	}
 
 	@override
@@ -148,6 +160,7 @@ class DiamondsPageState extends State {
 					right: 0,
 					child: GestureDetector(
 						child: Center(child: Text("\uf030", style: TextStyle(fontFamily: "Awesome", fontSize: 32))),
+						onTap: _makeScreenshot,
 					)
 				),
 				// ring
@@ -227,5 +240,13 @@ class DiamondsPageState extends State {
 		setState(() {
 			currentDiamond = d;  
 		});		
+	}
+
+	void _makeScreenshot() async {
+		if (hasStoragePermission) {
+			print("screenshot");
+		} else {
+			print("access denied");
+		}		
 	}
 }
