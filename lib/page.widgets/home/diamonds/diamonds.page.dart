@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
@@ -29,7 +30,13 @@ class DiamondsPageState extends State {
 	ScreenshotController _screenshotController = ScreenshotController(); 
 	DiamondGroup group;	
 	Diamond currentDiamond;
-	bool hasStoragePermission = false;
+	bool _hasStoragePermission = false;
+	bool _showPhoto = false;	
+	String _photoPath;
+	double _photoWidth = 0;
+	double _photoHeight = 0;
+	double _photoAspectRatio = 0;
+	GlobalKey _keyCameraWidget = GlobalKey();
 	// animations
 	double _screenshotBtnBottom = 210;
 
@@ -69,7 +76,7 @@ class DiamondsPageState extends State {
 
 	Future<void> _initPermissions() async {
 		PermissionStatus status = await Permission.storage.request();
-		hasStoragePermission = status.isGranted;
+		_hasStoragePermission = status.isGranted;
 	}
 
 	@override
@@ -83,13 +90,15 @@ class DiamondsPageState extends State {
 		bool cameraReady = _cameraController?.value?.isInitialized ?? false;
 		final Size deviceSize = MediaQuery.of(context).size;
 		final double deviceRatio = deviceSize.width / deviceSize.height;
+		//print("device ${deviceSize.width} ${deviceSize.height}");
 		
 		return Stack(
 			children: <Widget>[
 				// camera view
 				cameraReady ? 
 					Transform.scale(
-  						scale: _cameraController.value.aspectRatio / deviceRatio,
+  						key: _keyCameraWidget,
+						scale: _cameraController.value.aspectRatio / deviceRatio,
   						child: Center(
     						child: AspectRatio(
       							aspectRatio: _cameraController.value.aspectRatio,
@@ -163,6 +172,19 @@ class DiamondsPageState extends State {
 						onTap: _makeScreenshot,
 					)
 				),
+				// photo
+				_showPhoto ? 
+					Center(
+						child: Transform.scale(
+							scale: _cameraController.value.aspectRatio / (_photoAspectRatio - 0.01),
+							child: Container(						
+								height: _photoHeight,
+								width: _photoWidth,
+								child: Image.file(File(_photoPath), fit: BoxFit.cover),
+							),
+						),
+					) :
+					Container(),
 				// ring
 				AnimatedPositioned(
 					duration: Duration(milliseconds: 0),
@@ -175,13 +197,13 @@ class DiamondsPageState extends State {
 					),
 				),
 				// slider
-				ItemsSlider(group, this),
+				ItemsSlider(group, this),				
 			],
 		);
 	}
 
 	void onPanelClosed() {
-		Future.delayed(Duration(milliseconds: 500), () {			
+		Future.delayed(Duration(milliseconds: 1000), () {			
 			setState(() {
 				_screenshotBtnBottom = 10;
 			});
@@ -240,11 +262,43 @@ class DiamondsPageState extends State {
 		setState(() {
 			currentDiamond = d;  
 		});		
-	}
+	}	
 
-	void _makeScreenshot() async {
-		if (hasStoragePermission) {
-			print("screenshot");
+	String _getTimestamp() => DateTime.now().millisecondsSinceEpoch.toString();
+
+	Future<String> _takePhoto() async {
+    	if (!_cameraController.value.isInitialized) {
+      		return null;
+    	}
+
+		if (_cameraController.value.isTakingPicture) { // A capture is already pending, do nothing.
+      		return null;
+    	}
+    
+		final Directory extDir = await getApplicationDocumentsDirectory();
+    	final String dirPath = '${extDir.path}/Pictures/flutter_camera';
+    	await Directory(dirPath).create(recursive: true);
+    	final String filePath = '$dirPath/${_getTimestamp()}.jpg';    	
+
+    	try {
+      		await _cameraController.takePicture(filePath);
+      		return filePath;			  
+    	} on CameraException catch (e) {
+      		print(e);
+			return null;
+    	}
+  	}
+
+	Future<void> _makeScreenshot() async {
+		if (_hasStoragePermission) {
+			_photoPath = await _takePhoto();
+			RenderBox box = _keyCameraWidget.currentContext.findRenderObject();			
+			_photoWidth = box.size.width;
+			_photoHeight = box.size.height;
+			_photoAspectRatio = _photoWidth / _photoHeight;
+			//print("photo $_photoWidth $_photoHeight");
+			setState(() => _showPhoto = true);
+			Future.delayed(Duration(milliseconds: 1000), () => setState(() => _showPhoto = false));
 		} else {
 			print("access denied");
 		}		
